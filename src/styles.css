@@ -74,6 +74,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -308,9 +310,9 @@ ul {
   background: var(--bg-code);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: clamp(1.25rem, 3vw, 1.75rem);
+  padding: clamp(1.1rem, 3vw, 1.5rem);
   font-family: var(--font-mono);
-  font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+  font-size: clamp(0.62rem, 1.3vw, 0.72rem);
   line-height: 1.85;
   color: var(--text-code);
   overflow-x: auto;
@@ -637,7 +639,7 @@ ul {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.5rem 1rem;
+  gap: 0.25rem 0.85rem;
   margin-bottom: 0.3rem;
 }
 
@@ -655,9 +657,10 @@ ul {
 
 .exp-meta {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   margin-bottom: 0.6rem;
+  overflow-wrap: anywhere;
 }
 
 .exp-description {
@@ -665,6 +668,7 @@ ul {
   color: var(--text-body);
   line-height: 1.7;
   max-width: 68ch;
+  overflow-wrap: break-word;
 }
 
 /* =========================================================
@@ -852,10 +856,10 @@ ul {
     padding: 0.5rem 0.9rem;
   }
 
-  /* Code bio: wrap long lines instead of scrolling */
+  /* Code bio: pre-wrap as safety net at very narrow widths (<375px) */
   .code-card pre {
     white-space: pre-wrap;
-    word-break: break-all;
+    word-break: break-word;
   }
 
   /* Stats — single column so "Startups → Scale-up" never clips */
@@ -879,8 +883,38 @@ ul {
     padding: 0.85rem 1rem;
   }
 
-  /* Experience */
+  /* Experience timeline — stack header vertically, shrink indent */
+  .timeline-entry {
+    padding-left: 1.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .timeline-dot {
+    left: -4px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .exp-header {
+    flex-direction: column;
+    gap: 0.1rem;
+    align-items: flex-start;
+  }
+
+  .exp-title {
+    font-size: 0.95rem;
+  }
+
+  .exp-company {
+    font-size: 0.82rem;
+  }
+
+  .exp-meta {
+    font-size: 0.65rem;
+  }
+
   .exp-description {
+    font-size: 0.85rem;
     max-width: 100%;
   }
 
