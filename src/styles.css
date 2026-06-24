@@ -39,7 +39,7 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Spacing */
-  --section-gap: clamp(4rem, 8vw, 7rem);
+  --section-gap: clamp(2.75rem, 5vw, 4.5rem);
   --container-max: 1140px;
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -196,6 +196,58 @@ ul, ol {
   color: var(--text-heading);
 }
 
+.nav-hamburger {
+  display: none; /* shown only on mobile via media query */
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-heading);
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.nav-hamburger:hover {
+  color: var(--accent);
+}
+
+.mobile-nav {
+  display: none; /* safety: never visible on desktop even if rendered */
+}
+
+@media (max-width: 480px) {
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-nav a {
+    padding: 0.9rem clamp(1.25rem, 5vw, 2.5rem);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-body);
+    border-bottom: 1px solid var(--border);
+    transition: color var(--transition), background-color var(--transition);
+  }
+
+  .mobile-nav a:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-nav a:hover,
+  .mobile-nav a:focus-visible {
+    color: var(--text-heading);
+    background-color: var(--bg-panel-alt);
+  }
+}
+
 /* =========================================================
    BUTTONS
    ========================================================= */
@@ -262,8 +314,8 @@ ul, ol {
    ========================================================= */
 
 .hero {
-  padding-top: clamp(5rem, 10vw, 8rem);
-  padding-bottom: clamp(4rem, 8vw, 6rem);
+  padding-top: clamp(3.5rem, 7vw, 5.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 
 .hero-inner {
@@ -672,6 +724,90 @@ ul, ol {
 }
 
 /* =========================================================
+   JOURNEY
+   ========================================================= */
+
+.journey-intro {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.journey-milestones {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.journey-milestone {
+  flex: 1;
+  text-align: center;
+  max-width: 260px;
+  padding-bottom: 0.75rem;
+}
+
+.journey-year {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.journey-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+
+.journey-caption {
+  font-size: 0.82rem;
+  color: var(--text-body);
+  line-height: 1.65;
+}
+
+.journey-road-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .journey-road-path {
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .journey-milestone {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: calc(var(--i, 0) * 0.2s + 0.9s);
+  }
+
+  .journey-dot-svg {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    transition-delay: calc(var(--i, 0) * 0.2s + 0.65s);
+  }
+
+  .journey-animated .journey-milestone {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .journey-animated .journey-dot-svg {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
    WRITING
    ========================================================= */
 
@@ -730,6 +866,7 @@ ul, ol {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: clamp(2rem, 5vw, 3.5rem);
+  text-align: center;
 }
 
 .contact-status {
@@ -764,12 +901,14 @@ ul, ol {
   line-height: 1.75;
   margin-bottom: 2rem;
   max-width: 72ch;
+  margin-inline: auto;
 }
 
 .contact-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  justify-content: center;
 }
 
 /* =========================================================
@@ -835,11 +974,9 @@ ul, ol {
     --section-gap: 1.75rem;
   }
 
-  /* Nav: keep only Work / Skills / Contact */
-  .site-nav a:nth-child(3),
-  .site-nav a:nth-child(4) {
-    display: none;
-  }
+  /* Nav: swap inline links for hamburger */
+  .site-nav { display: none; }
+  .nav-hamburger { display: flex; }
 
   /* Hero */
   .hero {
@@ -942,5 +1079,52 @@ ul, ol {
   /* Section headings */
   .section-heading {
     margin-bottom: 1.5rem;
+  }
+
+  /* Journey: vertical road */
+  .journey-road-svg {
+    display: none;
+  }
+
+  .journey-milestones {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2rem;
+    position: relative;
+    margin-bottom: 0;
+  }
+
+  .journey-milestones::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #3C7FFF, #7F52FF, #E0529C);
+    border-radius: 2px;
+  }
+
+  .journey-milestone {
+    text-align: left;
+    max-width: 100%;
+    padding-left: 2rem;
+    padding-bottom: 0;
+    position: relative;
+    opacity: 1;
+    transform: none;
+  }
+
+  .journey-milestone::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--dot-color, var(--accent));
+    box-shadow: 0 0 8px var(--dot-color, var(--accent));
   }
 }

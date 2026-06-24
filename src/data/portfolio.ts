@@ -203,6 +203,34 @@ export const experience: ExperienceEntry[] = [
   },
 ]
 
+export interface JourneyMilestone {
+  id: string
+  year: string
+  title: string
+  caption: string
+}
+
+export const journey: JourneyMilestone[] = [
+  {
+    id: 'relocation',
+    year: '2018',
+    title: 'Relocated to the UK',
+    caption: 'Moved countries and re-established my engineering career in London.',
+  },
+  {
+    id: 'career-break',
+    year: '2023–2025',
+    title: 'Career break',
+    caption: 'Following a company restructure, planned time out for maternity and early childcare.',
+  },
+  {
+    id: 'building-again',
+    year: '2026',
+    title: 'Building again',
+    caption: 'Back and building — an AI-powered Android app and writing about modern mobile engineering.',
+  },
+]
+
 export interface WritingEntry {
   title: string
   date: string

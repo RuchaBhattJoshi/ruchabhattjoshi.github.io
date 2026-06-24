@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect, type CSSProperties } from 'react'
 import {
   profile,
   kicker,
@@ -8,6 +9,7 @@ import {
   projects,
   skillGroups,
   experience,
+  journey,
   writing,
   writingEmptyState,
   contact,
@@ -19,19 +21,53 @@ function TopBar() {
   return <div className="top-bar" aria-hidden="true" />
 }
 
+const NAV_LINKS = [
+  { href: '#work', label: 'Work' },
+  { href: '#experience', label: 'Experience' },
+  { href: '#journey', label: 'Journey' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#writing', label: 'Writing' },
+  { href: '#contact', label: 'Contact' },
+]
+
 function Header() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [menuOpen])
+
+  const close = () => setMenuOpen(false)
+
   return (
     <header className="site-header">
       <div className="container header-inner">
         <span className="logo" aria-label={profile.name}>{profile.initials}</span>
         <nav className="site-nav" aria-label="Primary navigation">
-          <a href="#work">Work</a>
-          <a href="#skills">Skills</a>
-          <a href="#experience">Experience</a>
-          <a href="#writing">Writing</a>
-          <a href="#contact">Contact</a>
+          {NAV_LINKS.map(({ href, label }) => (
+            <a key={href} href={href}>{label}</a>
+          ))}
         </nav>
+        <button
+          className="nav-hamburger"
+          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav-menu"
+          onClick={() => setMenuOpen(v => !v)}
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </div>
+      {menuOpen && (
+        <nav id="mobile-nav-menu" className="mobile-nav" aria-label="Mobile navigation">
+          {NAV_LINKS.map(({ href, label }) => (
+            <a key={href} href={href} onClick={close}>{label}</a>
+          ))}
+        </nav>
+      )}
     </header>
   )
 }
@@ -280,6 +316,112 @@ function ExperienceSection() {
   )
 }
 
+const JOURNEY_DOT_COLORS = ['#3C7FFF', '#7F52FF', '#E0529C'] as const
+
+function JourneySection() {
+  const pathRef = useRef<SVGPathElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    const path = pathRef.current
+    const section = sectionRef.current
+    if (!path || !section) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setAnimated(true)
+      return
+    }
+
+    const len = path.getTotalLength()
+    path.style.strokeDasharray = String(len)
+    path.style.strokeDashoffset = String(len)
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          path.style.strokeDashoffset = '0'
+          setAnimated(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.2 },
+    )
+
+    requestAnimationFrame(() => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <section id="journey" ref={sectionRef} className="section journey-section" aria-labelledby="journey-heading">
+      <div className="container">
+        <span className="section-label">Career path</span>
+        <h2 id="journey-heading" className="section-heading">The journey</h2>
+        <p className="journey-intro">A non-linear path — and I own every part of it.</p>
+
+        <div className={`journey-viz${animated ? ' journey-animated' : ''}`}>
+          <div className="journey-milestones" aria-label="Career milestones">
+            {journey.map((m, i) => (
+              <div
+                key={m.id}
+                className="journey-milestone"
+                style={{ '--i': i, '--dot-color': JOURNEY_DOT_COLORS[i] } as CSSProperties}
+              >
+                <p className="journey-year">{m.year}</p>
+                <p className="journey-title">{m.title}</p>
+                <p className="journey-caption">{m.caption}</p>
+              </div>
+            ))}
+          </div>
+
+          <svg
+            className="journey-road-svg"
+            viewBox="0 0 900 140"
+            aria-hidden="true"
+            role="presentation"
+          >
+            <defs>
+              <linearGradient id="journey-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#3C7FFF" />
+                <stop offset="50%" stopColor="#7F52FF" />
+                <stop offset="100%" stopColor="#E0529C" />
+              </linearGradient>
+              <filter id="journey-dot-glow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <path
+              ref={pathRef}
+              className="journey-road-path"
+              d="M0,115 C40,115 90,25 150,25 C210,25 260,115 300,115 C340,115 390,25 450,25 C510,25 560,115 600,115 C640,115 690,25 750,25 C810,25 860,115 900,115"
+              stroke="url(#journey-gradient)"
+              strokeWidth="3"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {JOURNEY_DOT_COLORS.map((color, i) => (
+              <circle
+                key={i}
+                className="journey-dot-svg"
+                cx={[150, 450, 750][i]}
+                cy={25}
+                r={7}
+                fill={color}
+                filter="url(#journey-dot-glow)"
+                style={{ '--i': i } as CSSProperties}
+              />
+            ))}
+          </svg>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function WritingSection() {
   return (
     <section id="writing" className="section" aria-labelledby="writing-heading">
@@ -380,8 +522,9 @@ export default function App() {
         <ExperienceBreakdown />
         <HighlightsStrip />
         <WorkSection />
-        <SkillsSection />
         <ExperienceSection />
+        <JourneySection />
+        <SkillsSection />
         <WritingSection />
         <ContactSection />
       </main>
