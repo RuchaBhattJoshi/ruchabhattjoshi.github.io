@@ -63,6 +63,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
@@ -72,6 +73,7 @@ body {
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -779,7 +781,7 @@ ul {
 }
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE — tablet (≤800px)
    ========================================================= */
 
 @media (max-width: 800px) {
@@ -787,8 +789,9 @@ ul {
     grid-template-columns: 1fr;
   }
 
+  /* Show headline/text first, code card second on mobile */
   .code-card {
-    order: -1;
+    order: 1;
   }
 
   .breakdown-grid {
@@ -800,32 +803,101 @@ ul {
     display: flex;
     align-items: center;
     gap: 1rem;
+    padding: 1rem 1.25rem;
   }
 
   .breakdown-value {
     margin-bottom: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
+  /* 2-col highlights is fine from 481–800px */
   .highlights-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .site-nav {
-    gap: 0.85rem;
+    gap: clamp(0.6rem, 2vw, 1rem);
   }
 }
 
-@media (max-width: 540px) {
-  .highlights-grid {
-    grid-template-columns: repeat(2, 1fr);
+/* =========================================================
+   RESPONSIVE — mobile (≤480px)
+   ========================================================= */
+
+@media (max-width: 480px) {
+  :root {
+    --section-gap: clamp(2.5rem, 8vw, 3.5rem);
   }
 
-  .site-nav a:nth-child(n+4) {
+  /* Nav: keep only Work / Skills / Contact */
+  .site-nav a:nth-child(3),
+  .site-nav a:nth-child(4) {
     display: none;
+  }
+
+  /* Hero */
+  .hero {
+    padding-top: clamp(3.5rem, 8vw, 5rem);
+    padding-bottom: clamp(2rem, 6vw, 3rem);
+  }
+
+  .hero-actions {
+    gap: 0.5rem;
   }
 
   .hero-actions .btn {
     font-size: 0.8rem;
-    padding: 0.55rem 1rem;
+    padding: 0.5rem 0.9rem;
+  }
+
+  /* Code bio: wrap long lines instead of scrolling */
+  .code-card pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* Stats — single column so "Startups → Scale-up" never clips */
+  .highlights-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .highlight-value {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+
+  .highlight-label {
+    display: inline;
+  }
+
+  /* Breakdown padding */
+  .breakdown-cell {
+    padding: 0.85rem 1rem;
+  }
+
+  /* Experience */
+  .exp-description {
+    max-width: 100%;
+  }
+
+  /* Writing: stack title + date vertically */
+  .writing-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  /* Contact */
+  .contact-box {
+    padding: 1.5rem 1.25rem;
+  }
+
+  /* Section headings */
+  .section-heading {
+    margin-bottom: 1.5rem;
   }
 }
