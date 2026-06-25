@@ -779,6 +779,34 @@ ul, ol {
   overflow: visible;
 }
 
+.journey-mobile-wrap {
+  display: none; /* shown on mobile via media query */
+  position: relative;
+}
+
+.journey-mobile-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.journey-mobile-item {
+  position: absolute;
+  max-width: 62%;
+  transform: translateY(-50%);
+}
+
+.journey-mobile-item--right {
+  left: 32%;
+  text-align: left;
+}
+
+.journey-mobile-item--left {
+  right: 32%;
+  text-align: right;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .journey-road-path {
     transition: stroke-dashoffset 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -803,6 +831,20 @@ ul, ol {
   }
 
   .journey-animated .journey-dot-svg {
+    opacity: 1;
+  }
+
+  .journey-mobile-path {
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .journey-mobile-item {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    transition-delay: calc(var(--i, 0) * 0.2s + 0.8s);
+  }
+
+  .journey-animated .journey-mobile-item {
     opacity: 1;
   }
 }
@@ -893,7 +935,7 @@ ul, ol {
 .contact-heading {
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 1.75rem;
 }
 
 .contact-body {
@@ -1081,50 +1123,8 @@ ul, ol {
     margin-bottom: 1.5rem;
   }
 
-  /* Journey: vertical road */
-  .journey-road-svg {
-    display: none;
-  }
-
-  .journey-milestones {
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    gap: 2rem;
-    position: relative;
-    margin-bottom: 0;
-  }
-
-  .journey-milestones::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, #3C7FFF, #7F52FF, #E0529C);
-    border-radius: 2px;
-  }
-
-  .journey-milestone {
-    text-align: left;
-    max-width: 100%;
-    padding-left: 2rem;
-    padding-bottom: 0;
-    position: relative;
-    opacity: 1;
-    transform: none;
-  }
-
-  .journey-milestone::before {
-    content: '';
-    position: absolute;
-    left: -5px;
-    top: 4px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--dot-color, var(--accent));
-    box-shadow: 0 0 8px var(--dot-color, var(--accent));
-  }
+  /* Journey: S-curve vertical road */
+  .journey-road-svg { display: none; }
+  .journey-milestones { display: none; }
+  .journey-mobile-wrap { display: block; }
 }

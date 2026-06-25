@@ -243,7 +243,7 @@ export const writingEmptyState =
   'First posts coming soon - on AI-assisted Android workflows, Compose migrations at scale, and fintech security.'
 
 export const contact = {
-  statusLine: 'Open to new roles - London & remote',
+  statusLine: 'Open to Android & Mobile Engineer roles — London & remote',
   heading: 'Need a mobile engineer who ships?',
   body: 'I am best suited for Android Engineer, Mobile Engineer, and Kotlin Multiplatform roles - hands-on and end-to-end, with real depth in scalable architecture, platform migrations, app security, and quality. I bring consumer-scale experience (18M+ users) and an AI-accelerated workflow. Open to mid-level roles across product, fintech, and startups - in London and remote-first teams.',
 }

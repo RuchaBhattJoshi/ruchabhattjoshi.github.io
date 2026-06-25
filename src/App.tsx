@@ -5,7 +5,7 @@ import {
   headline,
   intro,
   experienceBreakdown,
-  highlights,
+  // highlights, // HIGHLIGHTS — hidden for now
   projects,
   skillGroups,
   experience,
@@ -188,6 +188,7 @@ function ExperienceBreakdown() {
   )
 }
 
+/* HIGHLIGHTS — hidden for now; uncomment function + <HighlightsStrip /> in App() to re-enable
 function HighlightsStrip() {
   return (
     <div className="highlights-strip">
@@ -207,6 +208,7 @@ function HighlightsStrip() {
     </div>
   )
 }
+*/
 
 function BadgeEl({ badge }: { badge: ProjectBadge }) {
   return <span className={`badge badge-${badge}`}>{badge}</span>
@@ -258,9 +260,12 @@ function WorkSection() {
         <span className="section-label">Selected work</span>
         <h2 id="work-heading" className="section-heading">Case studies</h2>
         <div className="projects-grid">
-          {projects.map((p) => (
-            <ProjectCard key={p.id} project={p} />
-          ))}
+          {projects
+            // RANGE card — hidden for now, remove the .filter() line to re-enable
+            .filter((p) => p.id !== 'multi-sector')
+            .map((p) => (
+              <ProjectCard key={p.id} project={p} />
+            ))}
         </div>
       </div>
     </section>
@@ -318,29 +323,42 @@ function ExperienceSection() {
 
 const JOURNEY_DOT_COLORS = ['#3C7FFF', '#7F52FF', '#E0529C'] as const
 
+const MOBILE_DOT_CX = [75, 225, 75] as const
+const MOBILE_DOT_CY = [76, 190, 304] as const
+const MOBILE_LABEL_TOP = ['20%', '50%', '80%'] as const
+const MOBILE_LABEL_SIDE = ['right', 'left', 'right'] as const
+
 function JourneySection() {
   const pathRef = useRef<SVGPathElement>(null)
+  const mobilePathRef = useRef<SVGPathElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const [animated, setAnimated] = useState(false)
 
   useEffect(() => {
-    const path = pathRef.current
     const section = sectionRef.current
-    if (!path || !section) return
+    if (!section) return
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setAnimated(true)
       return
     }
 
-    const len = path.getTotalLength()
-    path.style.strokeDasharray = String(len)
-    path.style.strokeDashoffset = String(len)
+    const initDash = (p: SVGPathElement | null) => {
+      if (!p) return
+      const len = p.getTotalLength()
+      if (len > 0) {
+        p.style.strokeDasharray = String(len)
+        p.style.strokeDashoffset = String(len)
+      }
+    }
+    initDash(pathRef.current)
+    initDash(mobilePathRef.current)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          path.style.strokeDashoffset = '0'
+          if (pathRef.current) pathRef.current.style.strokeDashoffset = '0'
+          if (mobilePathRef.current) mobilePathRef.current.style.strokeDashoffset = '0'
           setAnimated(true)
           observer.disconnect()
         }
@@ -416,6 +434,65 @@ function JourneySection() {
               />
             ))}
           </svg>
+
+          {/* Mobile: S-curve vertical road */}
+          <div className="journey-mobile-wrap" aria-label="Career milestones">
+            <svg
+              className="journey-mobile-svg"
+              viewBox="0 0 300 380"
+              aria-hidden="true"
+              role="presentation"
+            >
+              <defs>
+                <linearGradient id="journey-gradient-v" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#3C7FFF" />
+                  <stop offset="50%" stopColor="#7F52FF" />
+                  <stop offset="100%" stopColor="#E0529C" />
+                </linearGradient>
+                <filter id="journey-dot-glow-v" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <path
+                ref={mobilePathRef}
+                className="journey-mobile-path"
+                d="M150,0 C150,34 75,48 75,76 C75,104 150,118 150,144 C150,165 225,175 225,190 C225,205 150,216 150,238 C150,268 75,280 75,304 C75,332 150,346 150,380"
+                stroke="url(#journey-gradient-v)"
+                strokeWidth="3.5"
+                fill="none"
+                strokeLinecap="round"
+              />
+              {JOURNEY_DOT_COLORS.map((color, i) => (
+                <circle
+                  key={i}
+                  cx={MOBILE_DOT_CX[i]}
+                  cy={MOBILE_DOT_CY[i]}
+                  r={8}
+                  fill={color}
+                  filter="url(#journey-dot-glow-v)"
+                />
+              ))}
+            </svg>
+            {journey.map((m, i) => (
+              <div
+                key={m.id}
+                className={`journey-mobile-item journey-mobile-item--${MOBILE_LABEL_SIDE[i]}`}
+                style={{
+                  top: MOBILE_LABEL_TOP[i],
+                  '--i': i,
+                  '--dot-color': JOURNEY_DOT_COLORS[i],
+                } as CSSProperties}
+              >
+                <p className="journey-year">{m.year}</p>
+                <p className="journey-title">{m.title}</p>
+                <p className="journey-caption">{m.caption}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -460,11 +537,20 @@ function ContactSection() {
         <div className="contact-box">
           <p className="contact-status">{contact.statusLine}</p>
           <h2 id="contact-heading" className="contact-heading">{contact.heading}</h2>
-          <p className="contact-body">{contact.body}</p>
           <div className="contact-actions">
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-cal-link="rucha-bhatt-joshi/chat-with-rucha"
+              data-cal-namespace="chat-with-rucha"
+              data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"dark"}'
+              aria-label="Book a chat (opens calendar popup)"
+            >
+              📅 Book a chat
+            </button>
             <a
               href={`mailto:${profile.email}`}
-              className="btn btn-primary"
+              className="btn btn-ghost"
               aria-label="Send an email"
             >
               Email me
@@ -486,6 +572,7 @@ function ContactSection() {
             >
               LinkedIn
             </a>
+            {/* GITHUB BUTTON — hidden for now; uncomment to re-enable
             <a
               href={profile.links.github}
               className="btn btn-ghost"
@@ -495,6 +582,7 @@ function ContactSection() {
             >
               GitHub
             </a>
+            */}
           </div>
         </div>
       </div>
@@ -520,7 +608,8 @@ export default function App() {
       <main>
         <Hero />
         <ExperienceBreakdown />
-        <HighlightsStrip />
+        {/* HIGHLIGHTS — hidden for now */}
+        {/* <HighlightsStrip /> */}
         <WorkSection />
         <ExperienceSection />
         <JourneySection />
